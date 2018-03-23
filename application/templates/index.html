@@ -1,0 +1,19 @@
+{% extends "layout.html" %}
+
+{% block body %}
+<h1>Uusi viesti</h1>
+<form method="POST" action="{{ url_for('posts_create') }}">
+  <input type="text", name="message"/>
+  <input type="submit", value="Reply"/>
+</form>
+
+<h1>Viestit</h1>
+
+<div id="posts">
+  {% for post in posts %}
+  <div id="post-{{ post.id }}">
+    <p>{{ post.message }}</p>
+  </div>
+  {% endfor %}
+</div>
+{% endblock %}
