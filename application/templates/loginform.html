@@ -1,0 +1,32 @@
+{% extends "layout.html" %}
+
+{% block body %}
+<h1>Kirjaudu sisään</h1>
+{% with errors = form.username.errors|list + form.password.errors|list + dberrors|list %}
+{% include "errors.html" %}
+{% endwith %}
+<form method="POST" action="{{ url_for('auth_login') }}">
+  <table>
+    <tr>
+      <td>
+	{{ form.username.label }}
+      </td>
+      <td>
+	{{ form.username }}
+      </td>
+    </tr>
+    <tr>
+      <td>
+	{{ form.password.label }}
+      </td>
+      <td>
+	{{ form.password }}
+      </td>
+    </tr>
+    <tr>
+      <td colspan="2">
+	<input type="submit" value="Kirjaudu"/>
+      </td>
+    </tr>
+</form>
+{% endblock %}

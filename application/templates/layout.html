@@ -1,8 +1,42 @@
 <meta charset="utf-8">
-<title>Demo</title>
-
+<title>Keskustelufoorumi</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+<table id='nav'>
+  <tr id='headnav'>
+    <td id='navheader'>
+        <h1>Keskustelufoorumi</h1>
+    </td>
+    <td id='navuserinfo'>
+      {% if current_user.is_authenticated %}
+      <p>Kirjautunut: {{ current_user.username }}</p>
+      {% else %}
+      <a href="{{ url_for('auth_login') }}">Kirjaudu</a>
+      {% endif %}
+    </td>
+  </tr>
+</table>
+<div id='topnav_wrapper'>
+  <table id='topnav'>
+    <tr>
+      <td class='nava'>
+        <a href="{{ url_for('index') }}">Etusivu</a>
+      </td>
+      {% if not current_user.is_authenticated %}
+      <td class='nava'>
+        <a href="{{ url_for('auth_login') }}">Kirjaudu</a>
+      </td>
+      <td class='nava'>
+        <a href="{{ url_for('auth_register') }}">Rekisteröidy</a>
+      </td>
+      {% else %}
+      <td class='nava'>
+        <a href="{{ url_for('auth_logout') }}">Kirjaudu ulos</a>
+      </td>
+      {% endif %}
+    </tr>
+  </table>
+</div>
+<div id='content'>
 {% block body %}
-<p>
-  Tähän tuodaan sisältö muaalta.
-</p>
 {% endblock %}
+</div>

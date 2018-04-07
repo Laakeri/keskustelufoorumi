@@ -1,0 +1,97 @@
+* {
+    margin:0;
+    padding:0;
+    font-family:verdana;
+    border-spacing:0;
+}
+body {
+    background-color:#0F0F0F;
+}
+a {
+    text-decoration:none;
+    color:#2809F6;
+}
+a:hover{
+    text-decoration:underline;
+}
+a:active{
+    color:#7F7F7F;
+}
+#content {
+    width:95%;
+    background-color:#99D9EA;
+    margin:auto;
+    min-height:400px;
+    padding-top:5px;
+    padding-bottom:5px;
+}
+.nava {
+    height:30px;
+    padding-left:5px;
+    padding-right:5px;
+    text-align:center;
+    min-width:80px;
+}
+.nava:hover {
+    height:30px;
+    background-color:#5EBEFF;
+    padding-left:5px;
+    padding-right:5px;
+}
+.nava a {
+    text-decoration:none;
+    color:#002F00;
+}
+
+#navheader p {
+    font-size:70px;
+    font-family:visitor;
+}
+#nav {
+    width:95%;
+    min-height:70px;
+    margin:auto;
+    background-color:#0099FF;
+}
+#nav td {
+    border-bottom:1px solid;
+}
+#topnav_wrapper {
+    background-color:#0099FF;
+    width:95%;
+    margin:auto;
+}
+#navheader {
+    width:50%;
+    text-align:center;
+    border-right:1px solid;
+}
+#navfiles td {
+    border:none;
+}
+#navfiles {
+    text-align:center;
+    border-right:1px solid;
+}
+#lantimer td {
+    border:none;
+}
+#navtimer {
+    text-align:center;
+}
+#navuserinfo td {
+    border:none;
+}
+#navuserinfo {
+    text-align:center;
+    border-right:1px solid;
+}
+h1 {
+    margin-bottom:10px;
+}
+ol,ul {
+    list-style:none;
+}
+.errors li {
+    color:red;
+}
