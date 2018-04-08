@@ -1,6 +1,6 @@
 venv
 __pycache__
-posts.db
+db.db
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
