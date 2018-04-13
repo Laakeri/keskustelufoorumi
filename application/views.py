@@ -3,6 +3,7 @@ from flask_login import login_required, current_user
 from application import app, db
 from application.models import Post
 from application.forms import PostForm
+from flask.json import jsonify
 
 @app.route("/", methods=["POST"])
 @login_required
@@ -14,7 +15,7 @@ def posts_create():
 
 @app.route("/")
 def index():
-    return render_template("index.html", posts = Post.query.order_by(Post.created_at.desc()).all(), postform = PostForm())
+    return render_template("index.html", postform = PostForm())
 
 @app.route("/register")
 def register():
@@ -23,3 +24,11 @@ def register():
 @app.route("/register", methods=["POST"])
 def new_user():
     return index()
+
+@app.route("/getposts", methods=["GET"])
+def give_posts():
+    posts = Post.query.filter_by(parent_id = request.args.get("parent")).order_by(Post.created_at.desc()).all()
+    response = []
+    for post in posts:
+        response.append({"username":post.user.username, "message":post.message})
+    return jsonify(response)

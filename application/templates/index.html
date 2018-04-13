@@ -9,12 +9,9 @@
 
 <h1>Viestit</h1>
 
-<div id="posts">
-  {% for post in posts %}
-  <div class="post" id="post-{{ post.id }}">
-    <p class="post-user">{{ post.user.username }}</p>
-    <p class="post-message">{{ post.message }}</p>
-  </div>
-  {% endfor %}
-</div>
+<div id="post-0-children"></div>
+<script>
+  showChilds("0");
+</script>
 {% endblock %}
+
