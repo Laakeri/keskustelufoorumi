@@ -1,17 +1,24 @@
 {% extends "layout.html" %}
 
 {% block body %}
+{% include 'js.html' %}
+{% if current_user.is_authenticated %}
 <h1>Uusi viesti</h1>
 <form method="POST" action="{{ url_for('posts_create') }}">
-  {{ postform.message }}
-  <input type="submit", value="Reply"/>
+    <input type="hidden" name="parent_msg" value="0"/>
+    {{ postform.message }}<br>
+    <input type="submit" value="Reply"/>
 </form>
-
+{% endif %}
 <h1>Viestit</h1>
 
 <div id="post-0-children"></div>
 <script>
-  showChilds("0");
+ {% if current_user.is_authenticated %}
+ showChilds("0", 0, true, 0);
+ {% else %}
+ showChilds("0", 0, false, 0);
+ {% endif %}
 </script>
 {% endblock %}
 

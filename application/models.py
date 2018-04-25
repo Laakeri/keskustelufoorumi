@@ -2,15 +2,15 @@ from application import db
 
 class Post(db.Model):
 
-    __tablename__ = "posts"
+    __tablename__ = "Post"
     
     id = db.Column(db.Integer, primary_key=True)
 
     created_at = db.Column(db.DateTime, default=db.func.current_timestamp(), nullable=False)
     message = db.Column(db.Text, nullable=False)
     
-    user_id = db.Column(db.Integer, db.ForeignKey('accounts.id'), nullable=False)
-    parent_id = db.Column(db.Integer, db.ForeignKey('posts.id'))
+    user_id = db.Column(db.Integer, db.ForeignKey('User.id'), nullable=False)
+    parent_id = db.Column(db.Integer, db.ForeignKey('Post.id'))
     
     user = db.relationship('User', foreign_keys=user_id)
     parent = db.relationship('Post', foreign_keys=parent_id)

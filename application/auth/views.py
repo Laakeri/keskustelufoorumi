@@ -3,8 +3,7 @@ from flask_login import login_user, logout_user
 
 from application import app, db
 from application.auth.models import User
-from application.auth.forms import LoginForm
-from application.auth.forms import RegisterForm
+from application.auth.forms import *
 
 import hashlib
 

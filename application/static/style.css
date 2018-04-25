@@ -101,7 +101,23 @@ ol,ul {
 }
 .post-message {
     font-size:17px;
+    padding-bottom:8px;
+    paddint-top:3px;
 }
 .post {
-    margin-bottom:20px;
+    margin-left:5px;
+    margin-bottom:5px;
+}
+.replybar a {
+    font-size:12px;
+}
+
+.post-children {
+    border-left:solid black 1px;
+    margin-left:5px;
+    margin-top:15px;
+}
+
+.replyfield {
+    margin-left:4px;
 }
