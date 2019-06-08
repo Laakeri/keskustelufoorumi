@@ -28,7 +28,7 @@ def new_user():
 
 @app.route("/getposts", methods=["GET"])
 def give_posts():
-    stmt = text("SELECT Post.message, Post.id, Post.created_at, User.username, count(Child.id) FROM Post Post INNER JOIN Account User ON User.id = Post.user_id LEFT JOIN Post Child ON Child.parent_id = Post.id WHERE Post.parent_id = :parent_id GROUP BY Post.id ORDER BY Post.created_at DESC").params(parent_id = request.args.get("parent"))
+    stmt = text("SELECT Post.message, Post.id, Post.created_at, Account.username, count(Child.id) FROM Post Post INNER JOIN Account ON Account.id = Post.user_id LEFT JOIN Post Child ON Child.parent_id = Post.id WHERE Post.parent_id = :parent_id GROUP BY Post.id ORDER BY Post.created_at DESC").params(parent_id = request.args.get("parent"))
     rows = db.engine.execute(stmt)
     #posts = Post.query.filter_by(parent_id = request.args.get("parent")).order_by(Post.created_at.desc()).all()
     response = []
