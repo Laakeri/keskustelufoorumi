@@ -42,11 +42,6 @@ a:active{
     text-decoration:none;
     color:#002F00;
 }
-
-#navheader p {
-    font-size:70px;
-    font-family:visitor;
-}
 #nav {
     width:95%;
     min-height:70px;

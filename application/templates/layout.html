@@ -6,6 +6,7 @@
   <tr id='headnav'>
     <td id='navheader'>
         <h1>Keskustelufoorumi</h1>
+        <p>{{ users_count() }} rekisteröitynyttä käyttäjää</p>
     </td>
     <td id='navuserinfo'>
       {% if current_user.is_authenticated %}

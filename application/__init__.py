@@ -35,5 +35,10 @@ login_manager.login_message = "Please login to use this functionality."
 def load_user(user_id):
     return User.query.get(user_id)
 
+def users_count():
+    return User.query.count()
+
+app.jinja_env.globals.update(users_count=users_count)
+
 # Create db tables
 db.create_all()
