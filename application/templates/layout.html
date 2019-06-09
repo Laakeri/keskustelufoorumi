@@ -10,7 +10,7 @@
     </td>
     <td id='navuserinfo'>
       {% if current_user.is_authenticated %}
-      <p>Kirjautunut: {{ current_user.username }}</p>
+      <p>Kirjautunut: <a href="{{ url_for('profile') }}?user={{ current_user.username | urlencode }}">{{ current_user.username }}</a></p>
       {% else %}
       <a href="{{ url_for('auth_login') }}">Kirjaudu</a>
       {% endif %}
@@ -31,6 +31,9 @@
         <a href="{{ url_for('auth_register') }}">Rekisteröidy</a>
       </td>
       {% else %}
+      <td class='nava'>
+        <a href="{{ url_for('profile') }}?user={{ current_user.username | urlencode }}">Profiili</a>
+      </td>
       <td class='nava'>
         <a href="{{ url_for('auth_logout') }}">Kirjaudu ulos</a>
       </td>

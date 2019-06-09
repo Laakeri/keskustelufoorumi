@@ -19,4 +19,3 @@ class Post(db.Model):
         self.message = message
         self.parent_id = parent_id
         self.user_id = user_id
-        

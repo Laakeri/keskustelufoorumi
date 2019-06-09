@@ -2,19 +2,25 @@ from flask import render_template, request, redirect, url_for
 from flask_login import login_required, current_user
 from application import app, db
 from application.models import Post
+from application.auth.models import User
 from application.forms import *
 from flask.json import jsonify
 from sqlalchemy.sql import text
+import urllib.parse
 
 @app.route("/", methods=["POST"])
 @login_required
 def posts_create():
+    form = PostForm(request.form)
+    if not form.validate():
+        return redirect(url_for("index"))
+
     parent = Post.query.filter_by(id=int(request.form.get("parent_msg"))).first()
     parent_id = None
     if parent is not None:
         parent_id = parent.id
 
-    post = Post(request.form.get("message"), parent_id, current_user.id)
+    post = Post(form.message.data, parent_id, current_user.id)
     db.session().add(post)
     db.session().commit()
     return redirect(url_for("index"))
@@ -41,3 +47,29 @@ def give_posts():
     for row in rows:
         response.append({"message":row[0], "id":row[1], "created_at":row[2], "username":row[3], "children":row[4]})
     return jsonify(response)
+
+@app.route("/profile", methods=["GET"])
+def profile():
+    user = User.query.filter_by(username=request.args.get("user")).first()
+    postcount = 0
+    errors = []
+    if user is None:
+        errors = ["Käyttäjää ei ole olemassa"]
+    else:
+        postcount = Post.query.filter_by(user_id=user.id).count()
+    return render_template("profile.html", user=user, errors=errors, postcount=postcount, descform = DescForm())
+
+def own_profile():
+    return redirect(url_for("profile")+"?user="+urllib.parse.quote(current_user.username))
+
+@app.route("/change_desc", methods=["POST"])
+def change_desc():
+    form = DescForm(request.form)
+
+    if not form.validate():
+        return own_profile()
+
+    if current_user.is_authenticated:
+        current_user.description = form.description.data
+        db.session.commit()
+    return own_profile()

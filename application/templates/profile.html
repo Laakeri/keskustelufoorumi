@@ -1,0 +1,26 @@
+{% extends "layout.html" %}
+
+{% block body %}
+{% with errors = errors|list %}
+{% include "errors.html" %}
+{% endwith %}
+
+{% if user is not none %}
+<h1>{{ user.username }}</h1>
+<p>Rekisteröitynyt: {{ user.register_time() }}</p>
+<p>Viestejä: {{ postcount }}</p>
+<p>Kuvaus: {{ user.description }}</p>
+
+<br>
+{% if current_user.id == user.id %}
+<h2>Muokkaa</h2>
+<p>Uusi kuvaus</p>
+<form method="POST" action="{{ url_for('change_desc') }}">
+	{{ descform.description }}<br>
+	<input type="submit" value="Muokkaa"/>
+</form>
+{% endif %}
+{% endif %}
+
+{% endblock %}
+

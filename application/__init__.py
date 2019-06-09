@@ -40,5 +40,7 @@ def users_count():
 
 app.jinja_env.globals.update(users_count=users_count)
 
+app.config["TEMPLATES_AUTO_RELOAD"] = True
+
 # Create db tables
 db.create_all()

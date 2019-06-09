@@ -1,4 +1,5 @@
 from application import db
+import pytz
 
 class User(db.Model):
 
@@ -11,6 +12,10 @@ class User(db.Model):
 
     username = db.Column(db.String(144), nullable=False)
     password = db.Column(db.String(144), nullable=False)
+
+    description = db.Column(db.Text, default="")
+
+    is_admin = db.Column(db.Boolean, default=False)
 
     def __init__(self, username, password):
         self.username = username
@@ -27,3 +32,9 @@ class User(db.Model):
 
     def is_authenticated(self):
         return True
+
+    def register_time(self):
+        tz = pytz.timezone('Europe/Helsinki')
+        utc = pytz.timezone('UTC')
+        local = utc.localize(self.date_created).astimezone(tz)
+        return local.strftime('%d.%m.%Y %H:%M')
