@@ -9,7 +9,12 @@ from sqlalchemy.sql import text
 @app.route("/", methods=["POST"])
 @login_required
 def posts_create():
-    post = Post(request.form.get("message"), request.form.get("parent_msg"), current_user.id)
+    parent = Post.query.filter_by(id=int(request.form.get("parent_msg"))).first()
+    parent_id = None
+    if parent is not None:
+        parent_id = parent.id
+
+    post = Post(request.form.get("message"), parent_id, current_user.id)
     db.session().add(post)
     db.session().commit()
     return redirect(url_for("index"))
@@ -28,7 +33,8 @@ def new_user():
 
 @app.route("/getposts", methods=["GET"])
 def give_posts():
-    stmt = text("SELECT Post.message, Post.id, Post.created_at, Account.username, count(Child.id) FROM Post Post INNER JOIN Account ON Account.id = Post.user_id LEFT JOIN Post Child ON Child.parent_id = Post.id WHERE Post.parent_id = :parent_id GROUP BY Post.id ORDER BY Post.created_at DESC").params(parent_id = request.args.get("parent"))
+    parent_id = int(request.args.get("parent"))
+    stmt = text("SELECT Post.message, Post.id, Post.created_at, Account.username, (SELECT COUNT(*) FROM Post Child WHERE Child.parent_id = Post.id) FROM Post Post INNER JOIN Account ON Account.id = Post.user_id WHERE Post.parent_id " + ("IS NULL" if parent_id == 0 else "= :parent_id") + " ORDER BY Post.created_at DESC").params(parent_id = parent_id)
     rows = db.engine.execute(stmt)
     #posts = Post.query.filter_by(parent_id = request.args.get("parent")).order_by(Post.created_at.desc()).all()
     response = []
