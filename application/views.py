@@ -8,7 +8,7 @@ from flask.json import jsonify
 from sqlalchemy.sql import text
 import urllib.parse
 
-@app.route("/", methods=["POST"])
+@app.route("/addpost", methods=["POST"])
 @login_required
 def posts_create():
     form = PostForm(request.form)
@@ -24,6 +24,14 @@ def posts_create():
     db.session().add(post)
     db.session().commit()
     return redirect(url_for("index"))
+
+@app.route("/deletepost", methods=["POST"])
+@login_required
+def delete_post():
+    id=int(request.form.get("id"))
+    stmt = text("DELETE FROM Post WHERE id = :id AND user_id = :user_id").params(id = id, user_id = current_user.id)
+    db.engine.execute(stmt)
+    return ""
 
 @app.route("/")
 def index():

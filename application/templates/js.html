@@ -1,9 +1,9 @@
 <script>
- function showChilds(parent, num_children, is_auth, depth) {
+ function showChilds(parent, num_children, is_auth, depth, username) {
      console.log("showChilds "+parent);
      if ($("#showreplies-"+parent).length) {
          $("#showreplies-"+parent).html("Piilota vastaukset ("+num_children+")");
-         $("#showreplies-"+parent).attr("onclick", "hideChilds("+parent+", "+num_children+", "+is_auth+", "+depth+"); return false;");
+         $("#showreplies-"+parent).attr("onclick", "hideChilds("+parent+", "+num_children+", "+is_auth+", "+depth+", \""+username+"\"); return false;");
      }
      $.getJSON("/getposts?parent="+parent, function(result){
          $.each(result, function(i, post) {
@@ -11,25 +11,34 @@
              if (is_auth) {
                  posthtml += "<a href='' onclick='showReplyField("+post['id']+");return false;'>Vastaa</a>";
              }
+             if (username == post['username']) {
+                posthtml += "<a href='' style='margin-left:15px;' onclick='deletePost("+post['id']+");return false;'>Poista</a>";
+             }
              if (post['children'] > 0) {
-                 posthtml += "<a style='margin-left:15px;' id='showreplies-"+post['id']+"' href='' onclick='showChilds("+post['id']+", "+post['children']+", "+is_auth+", "+(depth+1)+");return false;'>Näytä vastaukset ("+post['children']+")";
+                 posthtml += "<a style='margin-left:15px;' id='showreplies-"+post['id']+"' href='' onclick='showChilds("+post['id']+", "+post['children']+", "+is_auth+", "+(depth+1)+", \""+username+"\");return false;'>Näytä vastaukset ("+post['children']+")";
              }
              posthtml += "</div><div id='post-"+post['id']+"-children' class='post-children'></div></div>";
              $("#post-"+parent+"-children").append(posthtml);
          });
          if (depth == 0) {
              $.each(result, function(i, post) {
-                 showChilds(post['id'], post['children'], is_auth, depth+1);
+                 showChilds(post['id'], post['children'], is_auth, depth+1, username);
              });
          }
      });
  }
 
- function hideChilds(parent, num_children, is_auth, depth) {
+ function deletePost(post_id) {
+    $.post("/deletepost", {id: post_id}, function(result){
+        $("#post-"+post_id).remove();
+    });
+ }
+
+ function hideChilds(parent, num_children, is_auth, depth, username) {
      console.log("hideChilds "+parent);
      $("#post-"+parent+"-children").empty();
      $("#showreplies-"+parent).html("Näytä vastaukset ("+num_children+")");
-     $("#showreplies-"+parent).attr("onclick", "showChilds("+parent+", "+num_children+", "+is_auth+", "+depth+"); return false;");
+     $("#showreplies-"+parent).attr("onclick", "showChilds("+parent+", "+num_children+", "+is_auth+", "+depth+", \""+username+"\"); return false;");
  }
 
  function showReplyField(post) {
