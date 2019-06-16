@@ -7,11 +7,12 @@
      }
      $.getJSON("/getposts?parent="+parent, function(result){
          $.each(result, function(i, post) {
-             posthtml = "<div class='post' id='post-"+post['id']+"'><p class='post-user'>"+post['username']+"</p><p class='post-message'>"+post['message']+"</p><div class='replybar'>";
+             posthtml = "<div class='post' id='post-"+post['id']+"'><p class='post-user'><a href='{{ url_for('profile') }}?user="+encodeURIComponent(post['username'])+"'>"+post['username']+"</a></p><p class='post-message'>"+post['message']+"</p><div class='replybar'>";
              if (is_auth) {
                  posthtml += "<a href='' onclick='showReplyField("+post['id']+");return false;'>Vastaa</a>";
              }
              if (username == post['username']) {
+                posthtml += "<a href='' style='margin-left:15px;' onclick='showEditField("+post['id']+");return false;'>Muokkaa</a>";
                 posthtml += "<a href='' style='margin-left:15px;' onclick='deletePost("+post['id']+");return false;'>Poista</a>";
              }
              if (post['children'] > 0) {
@@ -29,7 +30,7 @@
  }
 
  function deletePost(post_id) {
-    $.post("/deletepost", {id: post_id}, function(result){
+    $.post("{{ url_for('delete_post') }}", {id: post_id}, function(result){
         $("#post-"+post_id).remove();
     });
  }
@@ -43,7 +44,15 @@
 
  function showReplyField(post) {
      $("#post-"+post+"-replyfield").remove();
-     replyhtml = '<div class="replyfield" id="post-'+post+'-replyfield"><form method="POST" action=" {{ url_for('posts_create') }} "> {{ postform.message }} <input type="hidden" name="parent_msg" value="'+post+'"/><br><input type="submit" value="Reply"/></form></div>';
+     $("#post-"+post+"-editfield").remove();
+     replyhtml = '<div class="replyfield" id="post-'+post+'-replyfield"><form method="POST" action=" {{ url_for('posts_create') }} "> {{ postform.message }} <input type="hidden" name="parent_msg" value="'+post+'"/><br><input type="submit" value="Vastaa"/></form></div>';
      $("#post-"+post+"-children").prepend(replyhtml);
  }
+
+function showEditField(post) {
+    $("#post-"+post+"-replyfield").remove();
+     $("#post-"+post+"-editfield").remove();
+     edithtml = '<div class="editfield" id="post-'+post+'-editfield"><form method="POST" action=" {{ url_for('edit_post') }} "> {{ postform.message }} <input type="hidden" name="id" value="'+post+'"/><br><input type="submit" value="Muokkaa"/></form></div>';
+     $("#post-"+post+"-children").prepend(edithtml);
+}
 </script>

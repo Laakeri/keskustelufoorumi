@@ -33,6 +33,18 @@ def delete_post():
     db.engine.execute(stmt)
     return ""
 
+@app.route("/editpost", methods=["POST"])
+@login_required
+def edit_post():
+    form = PostForm(request.form)
+    if not form.validate():
+        return redirect(url_for("index"))
+    id=int(request.form.get("id"))
+
+    stmt = text("UPDATE Post SET message = :message WHERE id = :id AND user_id = :user_id").params(message = form.message.data, id = id, user_id = current_user.id)
+    db.engine.execute(stmt)
+    return redirect(url_for("index"))
+
 @app.route("/")
 def index():
     return render_template("index.html", postform = PostForm())
