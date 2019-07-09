@@ -18,19 +18,41 @@ SELECT * FROM Account WHERE username = :username AND password = :password;
 
 ### Selata viestejä
 
-```SQL
-SELECT Post.message, Post.id, Post.created_at, Account.username, (SELECT COUNT(*) FROM Post Child WHERE Child.parent_id = Post.id), Favorite.post_id FROM Post Post INNER JOIN Account ON Account.id = Post.user_id LEFT JOIN Favorite ON Favorite.post_id = Post.id AND Favorite.user_id = :current_user_id WHERE Post.parent_id = :parent_id ORDER BY Post.created_at DESC LIMIT :posts_limit OFFSET :offset;
-```
-
 * Etusivu näyttää viestejä järjestyksessä uudesta vanhimpaan
 * Viestiketjujen laajennus ja pienennys toimii javascriptillä
 * Yhdellä kertaa ladataan korkeintaan 4 peräkkäistä viestiä, lisää voi ladata painamalla "Näytä lisää" (4 on pieni luku, mutta tätä on helppo demota)
 * Viestejä voi selata myös alkaen jostain viestiketjusta painaen "Linkki"-linkkiä
 
+Seuraavaa kyselyä käytetään kaikessa viestien selaamisessa. Se kyselee annetun parent-viestin lapsiviestien kaikki tarpeelliset tiedot. Lapsiviestejä listataan korkeintaan :posts_limit määrä, ja offsettiä käytetään selaamisen mahdollistamiseen. Hyvä trikki on käyttää limittinä 5 viestiä kun halutaan listata 4 viestiä, koska sitten tiedetään suoraan onko neljän seuraavan jälkeen vielä lisää viestejä.
+```SQL
+SELECT 
+	Post.message, 
+	Post.id, 
+	Post.created_at, 
+	Account.username, 
+	(SELECT COUNT(*) FROM Post Child WHERE Child.parent_id = Post.id), 
+	Favorite.post_id 
+FROM Post Post 
+INNER JOIN Account ON Account.id = Post.user_id 
+LEFT JOIN Favorite ON Favorite.post_id = Post.id AND Favorite.user_id = :current_user_id 
+WHERE Post.parent_id = :parent_id 
+ORDER BY Post.created_at DESC 
+LIMIT :posts_limit OFFSET :offset;
+```
+
 ### Katsoa käyttäjien profiilia
 
 * Profiilissa näkyy milloin käyttäjä on rekisteröitynyt, montako viestiä hän on lähettänyt ja mahdollisesti kuvaus
 * Jokaisen viestin yhteydessä on linkki käyttäjän profiiliin
+
+```SQL
+SELECT
+	Account.date_created,
+	Account.description,
+	(SELECT COUNT(*) FROM Post WHERE Account.id = Post.user_id)
+FROM Account Account
+WHERE Account.username = :username;
+```
 
 ## Sivuston käyttäjät voivat:
 
