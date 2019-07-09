@@ -19,4 +19,4 @@ Toimintoja:
 
 [Alkuperäiset user storyt](https://github.com/Laakeri/keskustelufoorumi/tree/master/documentation/userstories.md)
 
-[Sovellus herokussa](https://tsoha-keskustelufoorumi.herokuapp.com/)
+[Sovellus herokussa](https://tsoha-keskustelufoorumi.herokuapp.com/) (Jostain syystä jos sovellusta ei ole käytetty pitkään aikaan niin Heroku voi antaa outoja virheitä muutamalla ekalla sivulatauksella.)

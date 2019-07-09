@@ -54,7 +54,7 @@ FROM Account Account
 WHERE Account.username = :username;
 ```
 
-## Sivuston käyttäjät voivat:
+## Rekisteröityneet käyttäjät voivat:
 
 ### Lähettää viestejä
 
