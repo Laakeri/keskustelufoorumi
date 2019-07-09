@@ -12,7 +12,7 @@ class Post(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('account.id'), nullable=False)
     parent_id = db.Column(db.Integer, db.ForeignKey('post.id'))
     
-    #user = db.relationship('User', foreign_keys=user_id)
+    user = db.relationship('User', foreign_keys=user_id)
     #parent = db.relationship('Post', foreign_keys=parent_id)
     
     def __init__(self, message, parent_id, user_id):

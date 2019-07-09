@@ -23,6 +23,10 @@ def posts_create():
     post = Post(form.message.data, parent_id, current_user.id)
     db.session().add(post)
     db.session().commit()
+
+    if request.form.get("redi"):
+        return redirect(url_for("thread", pid=int(request.form.get("redi"))))
+
     return redirect(url_for("index"))
 
 @app.route("/deletepost", methods=["POST"])
@@ -49,6 +53,16 @@ def edit_post():
 def index():
     return render_template("index.html", postform = PostForm())
 
+@app.route("/thread", methods=["GET"])
+def thread():
+    post_id=int(request.args.get("pid"))
+    post = Post.query.filter_by(id=post_id).first()
+    print(post_id)
+    print(post.id)
+    if post is None:
+        return redirect(url_for("index"))
+    return render_template("thread.html", post = post, postform = PostForm())
+
 @app.route("/register")
 def register():
     return render_template("register.html", form = RegisterForm())
@@ -57,16 +71,27 @@ def register():
 def new_user():
     return index()
 
+posts_limit = 4
+
 @app.route("/getposts", methods=["GET"])
 def give_posts():
     parent_id = int(request.args.get("parent"))
-    stmt = text("SELECT Post.message, Post.id, Post.created_at, Account.username, (SELECT COUNT(*) FROM Post Child WHERE Child.parent_id = Post.id) FROM Post Post INNER JOIN Account ON Account.id = Post.user_id WHERE Post.parent_id " + ("IS NULL" if parent_id == 0 else "= :parent_id") + " ORDER BY Post.created_at DESC").params(parent_id = parent_id)
+    offset = int(request.args.get("offset"))
+    stmt = text("SELECT Post.message, Post.id, Post.created_at, Account.username, (SELECT COUNT(*) FROM Post Child WHERE Child.parent_id = Post.id) FROM Post Post INNER JOIN Account ON Account.id = Post.user_id WHERE Post.parent_id " + ("IS NULL" if parent_id == 0 else "= :parent_id") + " ORDER BY Post.created_at DESC LIMIT :posts_limit OFFSET :offset").params(parent_id = parent_id, posts_limit = posts_limit+1, offset = offset)
     rows = db.engine.execute(stmt)
-    #posts = Post.query.filter_by(parent_id = request.args.get("parent")).order_by(Post.created_at.desc()).all()
+    
     response = []
     for row in rows:
         response.append({"message":row[0], "id":row[1], "created_at":row[2], "username":row[3], "children":row[4]})
-    return jsonify(response)
+
+    next_offset = -1
+    if len(response) > posts_limit:
+        assert len(response) == posts_limit+1
+        next_offset = offset + posts_limit
+        limit_reached = True
+        response.pop()
+
+    return jsonify({"posts":response, "next_offset":next_offset})
 
 @app.route("/profile", methods=["GET"])
 def profile():

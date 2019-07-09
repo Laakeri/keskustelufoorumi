@@ -1,0 +1,28 @@
+{% extends "layout.html" %}
+
+{% block body %}
+{% include 'js.html' %}
+<p class="post-user"><a href="{{ url_for('profile') }}?user={{ post.user.username | urlencode }}" style="font-size:18px;">{{ post.user.username }}</a></p>
+<p class="post-message" style="font-size:25px;">{{ post.message }}</p>
+
+{% if current_user.is_authenticated %}
+<h2>Vastaa</h2>
+<form method="POST" action="{{ url_for('posts_create') }}">
+    <input type="hidden" name="parent_msg" value="{{ post.id }}"/>
+    <input type="hidden" name="redi" value="{{ post.id }}"/>
+    {{ postform.message }}<br>
+    <input type="submit" value="Lähetä"/>
+</form>
+{% endif %}
+
+<h2 style="margin-top:30px;">Vastaukset:</h2>
+<div id="post-{{ post.id }}-children"></div>
+<script>
+ {% if current_user.is_authenticated %}
+ showChilds("{{ post.id }}", 0, true, 0, "{{ current_user.username }}", 0);
+ {% else %}
+ showChilds("{{ post.id }}", 0, false, 0, "", 0);
+ {% endif %}
+</script>
+{% endblock %}
+

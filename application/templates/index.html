@@ -7,7 +7,7 @@
 <form method="POST" action="{{ url_for('posts_create') }}">
     <input type="hidden" name="parent_msg" value="0"/>
     {{ postform.message }}<br>
-    <input type="submit" value="Reply"/>
+    <input type="submit" value="Lähetä"/>
 </form>
 {% endif %}
 <h1>Viestit</h1>
@@ -15,9 +15,9 @@
 <div id="post-0-children"></div>
 <script>
  {% if current_user.is_authenticated %}
- showChilds("0", 0, true, 0, "{{ current_user.username }}");
+ showChilds("0", 0, true, 0, "{{ current_user.username }}", 0);
  {% else %}
- showChilds("0", 0, false, 0, "");
+ showChilds("0", 0, false, 0, "", 0);
  {% endif %}
 </script>
 {% endblock %}
