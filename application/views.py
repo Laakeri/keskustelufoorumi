@@ -1,7 +1,7 @@
 from flask import render_template, request, redirect, url_for
 from flask_login import login_required, current_user
 from application import app, db
-from application.models import Post
+from application.models import Post, Favorite
 from application.auth.models import User
 from application.forms import *
 from flask.json import jsonify
@@ -77,12 +77,18 @@ posts_limit = 4
 def give_posts():
     parent_id = int(request.args.get("parent"))
     offset = int(request.args.get("offset"))
-    stmt = text("SELECT Post.message, Post.id, Post.created_at, Account.username, (SELECT COUNT(*) FROM Post Child WHERE Child.parent_id = Post.id) FROM Post Post INNER JOIN Account ON Account.id = Post.user_id WHERE Post.parent_id " + ("IS NULL" if parent_id == 0 else "= :parent_id") + " ORDER BY Post.created_at DESC LIMIT :posts_limit OFFSET :offset").params(parent_id = parent_id, posts_limit = posts_limit+1, offset = offset)
+    current_user_id = None
+    if current_user.is_authenticated:
+        current_user_id = current_user.id
+    stmt = text("SELECT Post.message, Post.id, Post.created_at, Account.username, (SELECT COUNT(*) FROM Post Child WHERE Child.parent_id = Post.id), Favorite.post_id FROM Post Post INNER JOIN Account ON Account.id = Post.user_id LEFT JOIN Favorite ON Favorite.post_id = Post.id AND Favorite.user_id = :current_user_id WHERE Post.parent_id " + ("IS NULL" if parent_id == 0 else "= :parent_id") + " ORDER BY Post.created_at DESC LIMIT :posts_limit OFFSET :offset").params(parent_id = parent_id, current_user_id = current_user_id, posts_limit = posts_limit+1, offset = offset)
     rows = db.engine.execute(stmt)
     
     response = []
     for row in rows:
-        response.append({"message":row[0], "id":row[1], "created_at":row[2], "username":row[3], "children":row[4]})
+        is_favorite = False
+        if row[5]:
+            is_favorite = True
+        response.append({"message":row[0], "id":row[1], "created_at":row[2], "username":row[3], "children":row[4], "is_favorite":is_favorite})
 
     next_offset = -1
     if len(response) > posts_limit:
@@ -118,3 +124,24 @@ def change_desc():
         current_user.description = form.description.data
         db.session.commit()
     return own_profile()
+
+@app.route("/addfavorite", methods=["POST"])
+@login_required
+def add_favorite():
+    favorite = Favorite(current_user.id, int(request.form.get("post_id")))
+    db.session().add(favorite)
+    db.session().commit()
+    return ""
+
+@app.route("/remfavorite", methods=["POST"])
+@login_required
+def rem_favorite():
+    stmt = text("DELETE FROM Favorite WHERE user_id = :user_id AND post_id = :post_id").params(user_id = current_user.id, post_id = int(request.form.get("post_id")))
+    db.engine.execute(stmt)
+    return ""
+
+@app.route("/favorites")
+@login_required
+def favorites():
+    favorites = Favorite.query.filter_by(user_id=current_user.id).all()
+    return render_template("favorites.html", favorites=favorites)

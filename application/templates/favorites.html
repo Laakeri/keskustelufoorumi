@@ -1,0 +1,29 @@
+{% extends "layout.html" %}
+
+{% block body %}
+{% if current_user.is_authenticated %}
+<script>
+function remFavorite(post_id) {
+    $.post("{{ url_for('rem_favorite') }}", {post_id: post_id}, function(result) {
+    	$("#favo-"+post_id).remove();
+    });
+}
+</script>
+
+<h1>Suosikit</h1>
+{% for favorite in favorites %}
+<div id="favo-{{ favorite.post.id }}">
+<p class="post-user"><a href="{{ url_for('profile') }}?user={{ favorite.post.user.username | urlencode }}" style="font-size:16px;">{{ favorite.post.user.username }}</a></p>
+<p class="post-message" style="font-size:20px;">{{ favorite.post.message }}</p>
+<p style="margin-bottom:20px;">
+<a href="{{ url_for('thread') }}?pid={{ favorite.post.id }}">Viestiketju</a>
+<a href="" style="margin-left:10px;" onclick="remFavorite({{ favorite.post.id }});return false;">Poista</a>
+</p>
+</div>
+
+{% endfor %}
+{% else %}
+<h1>Kirjaudu sisään ensin</h1>
+{% endif %}
+{% endblock %}
+

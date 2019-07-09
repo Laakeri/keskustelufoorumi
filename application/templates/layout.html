@@ -32,6 +32,9 @@
       </td>
       {% else %}
       <td class='nava'>
+        <a href="{{ url_for('favorites') }}">Suosikit</a>
+      </td>
+      <td class='nava'>
         <a href="{{ url_for('profile') }}?user={{ current_user.username | urlencode }}">Profiili</a>
       </td>
       <td class='nava'>

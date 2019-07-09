@@ -19,10 +19,19 @@
                  posthtml += "<a style='margin-right:15px;' id='showreplies-"+post['id']+"' href='' onclick='showChilds("+post['id']+", "+post['children']+", "+is_auth+", "+(depth+1)+", \""+username+"\", 0);return false;'>Näytä vastaukset ("+post['children']+")</a>";
              }
              posthtml += "<a href='{{ url_for('thread') }}?pid="+post['id']+"' style='margin-right:15px;'>Linkki</a>";
-             posthtml += "</div><div id='post-"+post['id']+"-children' class='post-children'></div></div>";
-             $("#post-"+parent+"-children").append(posthtml);
-             $("#post-"+post['id']+"-message").text(post['message']);
-             $("#post-"+post['id']+"-userlink").text(post['username']);
+             if (is_auth) {
+                posthtml += "<span id='favobutton-"+post['id']+"'>";
+                if (post['is_favorite']) {
+                    posthtml += "<a href='' onclick='remFavorite("+post['id']+");return false;' style='margin-right:15px;'>Poista suosikeista</a>";
+                } else {
+                    posthtml += "<a href='' onclick='addFavorite("+post['id']+");return false;' style='margin-right:15px;'>Lisää suosikiksi</a>";
+                }
+                posthtml += "</span>";
+            }
+            posthtml += "</div><div id='post-"+post['id']+"-children' class='post-children'></div></div>";
+            $("#post-"+parent+"-children").append(posthtml);
+            $("#post-"+post['id']+"-message").text(post['message']);
+            $("#post-"+post['id']+"-userlink").text(post['username']);
          });
          if (depth == 0) {
              $.each(result.posts, function(i, post) {
@@ -65,5 +74,15 @@ function showEditField(post) {
 function loadMore(parent, num_children, is_auth, depth, username, offset) {
     $("#loadmore-"+parent).remove();
     showChilds(parent, num_children, is_auth, depth, username, offset);
+}
+function addFavorite(post_id) {
+    $.post("{{ url_for('add_favorite') }}", {post_id: post_id}, function(result) {
+        $("#favobutton-"+post_id).html("<a href='' onclick='remFavorite("+post_id+");return false;' style='margin-right:15px;'>Poista suosikeista</a>");
+    });
+}
+function remFavorite(post_id) {
+    $.post("{{ url_for('rem_favorite') }}", {post_id: post_id}, function(result) {
+        $("#favobutton-"+post_id).html("<a href='' onclick='addFavorite("+post_id+");return false;' style='margin-right:15px;'>Lisää suosikiksi</a>");
+    });
 }
 </script>
