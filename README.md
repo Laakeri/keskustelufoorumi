@@ -17,6 +17,8 @@ Toimintoja:
 
 [Käyttöohje](https://github.com/Laakeri/keskustelufoorumi/tree/master/documentation/kayttoohje.md)
 
+[Tietokantakaavio](https://github.com/Laakeri/keskustelufoorumi/blob/master/documentation/tietokantakaavio.png)
+
 [Alkuperäiset user storyt](https://github.com/Laakeri/keskustelufoorumi/tree/master/documentation/userstories.md)
 
 [Sovellus herokussa](https://tsoha-keskustelufoorumi.herokuapp.com/) (Jostain syystä jos sovellusta ei ole käytetty pitkään aikaan niin Heroku voi antaa outoja virheitä muutamalla ekalla sivulatauksella.)
