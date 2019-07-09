@@ -60,17 +60,45 @@ WHERE Account.username = :username;
 
 * Uusi viesti tai vastauksena johonkin viestiin
 
+```SQL
+INSERT INTO Post (message, user_id, parent_id) VALUES (:message, :current_user_id, :parent_id);
+```
+
 ### Muokata lähettämiään viestejä
+
+```SQL
+UPDATE Post SET message = :message WHERE id = :id AND user_id = :current_user_id;
+```
 
 ### Poistaa lähettämiään viestejä
 
+```SQL
+DELETE FROM Post WHERE id = :id AND user_id = :current_user_id;
+```
+
 ### Lisätä viestejä suosikeiksi
+
+```SQL
+INSERT INTO Favorite (user_id, post_id) VALUES (:current_user_id, :post_id);
+```
 
 ### Poistaa viestejä suosikeista
 
+```SQL
+DELETE FROM Favorite WHERE user_id = :current_user_id AND post_id = :post_id;
+```
+
 ### Selata omia suosikkiviestejä
 
+```SQL
+SELECT post_id FROM Favorite WHERE user_id = :current_user_id;
+```
+
 ### Muokata kuvausta omassa profiilissa
+
+```SQL
+UPDATE Account SET description = :description WHERE id = :current_user_id;
+```
 
 ### Kirjautua ulos
 
